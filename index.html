@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fulfillment Hub</title>
+<style>
+:root{
+  --bg:#F5F7FA;
+  --panel:#FFFFFF;
+  --panel2:#F8FAFC;
+  --line:#E2E8F0;
+  --text:#172033;
+  --sub:#64748B;
+
+  --blue:#2563EB;
+  --blue-light:#EFF6FF;
+  --amber:#D97706;
+  --amber-light:#FFF7ED;
+  --sage:#16A34A;
+  --sage-light:#F0FDF4;
+  --red:#DC2626;
+  --red-light:#FEF2F2;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  height:100%;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+.mono{
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+}
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 28px;
+  background:#FFFFFF;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:10;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+header h1{
+  font-size:19px;
+  margin:0;
+  font-weight:700;
+  letter-spacing:-.2px;
+}
+
+header h1 span{
+  color:var(--sub);
+  font-weight:400;
+  font-size:13px;
+  margin-left:9px;
+}
+
+.tabs{
+  display:flex;
+  gap:3px;
+  background:#F1F5F9;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:3px;
+}
+
+.tabs button{
+  background:transparent;
+  border:none;
+  color:var(--sub);
+  padding:8px 15px;
+  border-radius:6px;
+  font-size:13px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.15s ease;
+}
+
+.tabs button:hover{
+  color:var(--text);
+}
+
+.tabs button.active{
+  background:#FFFFFF;
+  color:var(--blue);
+  box-shadow:0 1px 3px rgba(15,23,42,.10);
+}
+
+main{
+  max-width:1180px;
+  margin:0 auto;
+  padding:24px 26px 60px;
+}
+
+.hide{
+  display:none !important;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  margin-bottom:20px;
+  overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,23,42,.03);
+}
+
+.panel-head{
+  padding:15px 18px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.panel-head h2{
+  margin:0;
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.panel-head .count{
+  color:var(--sub);
+  font-size:12px;
+}
+
+.pipeline{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:16px 18px;
+}
+
+.pipe-stage{
+  flex:1;
+  min-width:100px;
+  text-align:left;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:13px 14px;
+}
+
+.pipe-stage .n{
+  font-size:22px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.pipe-stage .l{
+  font-size:11.5px;
+  color:var(--sub);
+  margin-top:3px;
+}
+
+.attn-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:11px 18px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  gap:12px;
+}
+
+.attn-row:last-child{
+  border-bottom:none;
+}
+
+.attn-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.exc-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:11px 18px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  gap:12px;
+}
+
+.exc-row:last-child{
+  border-bottom:none;
+}
+
+.filters{
+  display:flex;
+  gap:6px;
+  padding:10px 18px;
+  border-bottom:1px solid var(--line);
+  flex-wrap:wrap;
+}
+
+.filters button{
+  background:#FFFFFF;
+  border:1px solid var(--line);
+  color:var(--sub);
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.15s ease;
+}
+
+.filters button:hover{
+  border-color:#CBD5E1;
+  color:var(--text);
+}
+
+.filters button.active{
+  background:var(--blue-light);
+  color:var(--blue);
+  border-color:#BFDBFE;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+th{
+  text-align:left;
+  padding:10px 18px;
+  color:var(--sub);
+  background:#F8FAFC;
+  font-weight:600;
+  font-size:11px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+
+td{
+  padding:12px 18px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle;
+}
+
+tr:last-child td{
+  border-bottom:none;
+}
+
+tbody tr:hover{
+  background:#FAFCFF;
+}
+
+tr.blocked{
+  background:var(--red-light);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:4px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.badge.priority{
+  background:var(--amber-light);
+  color:var(--amber);
+}
+.badge.stalled{
+  background:#FFF7ED;
+  color:var(--amber);
+}
+
+.badge.blocked{
+  background:var(--red-light);
+  color:var(--red);
+}
+
+.badge.ok{
+  background:var(--sage-light);
+  color:var(--sage);
+}
+
+.stage{
+  color:var(--sub);
+  font-size:12px;
+}
+
+.stage b{
+  color:var(--text);
+  font-weight:600;
+}
+
+.deadline{
+  font-size:12.5px;
+  font-weight:500;
+}
+
+.deadline.risk{
+  color:var(--red);
+  font-weight:700;
+}
+
+.deadline.soon{
+  color:var(--amber);
+  font-weight:700;
+}
+
+.inv-row{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 18px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.inv-row:last-child{
+  border-bottom:none;
+}
+
+.inv-loc{
+  color:var(--sub);
+  font-size:11.5px;
+  margin-top:3px;
+}
+
+.inv-qty.low{
+  color:var(--red);
+  font-weight:700;
+}
+
+.btn{
+  background:var(--blue);
+  color:#FFFFFF;
+  border:none;
+  padding:7px 12px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+.btn:hover{
+  background:#1D4ED8;
+}
+
+.btn.done{
+  background:var(--sage);
+}
+
+.btn.done:hover{
+  background:#15803D;
+}
+
+.btn:disabled{
+  background:#E2E8F0;
+  color:#94A3B8;
+  cursor:default;
+}
+
+.transfer-badge{
+  font-size:11px;
+  color:var(--sub);
+}
+
+.wh-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.task{
+  background:#FFFFFF;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  box-shadow:0 1px 2px rgba(15,23,42,.03);
+}
+
+.task.priority-task{
+  border-left:4px solid var(--amber);
+}
+
+.task.blocked-task{
+  border-left:4px solid var(--red);
+  background:#FFF9F9;
+}
+
+.task-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.task-id{
+  font-size:19px;
+  font-weight:700;
+}
+
+.task-cust{
+  color:var(--sub);
+  font-size:12.5px;
+  margin-top:3px;
+}
+
+.item-detail{
+  background:#F8FAFC;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:13px;
+}
+
+.item-detail .row{
+  display:flex;
+  justify-content:space-between;
+  padding:3px 0;
+  color:var(--sub);
+  gap:15px;
+}
+
+.item-detail .row b{
+  color:var(--text);
+  font-weight:600;
+}
+
+.task-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.big-btn{
+  flex:1;
+  min-width:140px;
+  padding:13px 16px;
+  font-size:14px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  background:#FFFFFF;
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.big-btn.primary{
+  background:var(--blue);
+  color:#FFFFFF;
+  border-color:var(--blue);
+}
+
+.big-btn.primary:hover{
+  background:#1D4ED8;
+}
+
+.check{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--sub);
+}
+
+.check input{
+  width:17px;
+  height:17px;
+  accent-color:var(--blue);
+}
+
+.empty{
+  text-align:center;
+  padding:42px;
+  color:var(--sub);
+  font-size:14px;
+}
+
+.load-more{
+  width:100%;
+  padding:10px;
+  background:#F8FAFC;
+  border:1px dashed #CBD5E1;
+  color:var(--sub);
+  border-radius:7px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+  margin-top:5px;
+}
+
+.load-more:hover{
+  background:#F1F5F9;
+  color:var(--text);
+}
+
+@media(max-width:700px){
+  header{
+    padding:13px 16px;
+  }
+
+  header h1{
+    font-size:17px;
+  }
+
+  header h1 span{
+    display:none;
+  }
+
+  main{
+    padding:16px 12px 40px;
+  }
+
+  .pipeline{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .pipe-stage{
+    min-width:0;
+  }
+
+  th,
+  td{
+    padding:10px 12px;
+  }
+
+  .panel{
+    border-radius:8px;
+  }
+
+  .task{
+    padding:15px;
+  }
+
+  .item-detail .row{
+    flex-direction:column;
+    gap:2px;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fulfillment Hub <span>XYZ Warehouse Ops</span></h1>
+  <div class="tabs">
+    <button id="tabOffice" class="active" onclick="setView('office')">Office Dashboard</button>
+    <button id="tabFloor" onclick="setView('floor')">Warehouse Floor</button>
+  </div>
+</header>
+<main>
+  <div id="viewOffice"></div>
+  <div id="viewFloor" class="hide"></div>
+</main>
+
+<script>
+const STAGES = ["received","processed","picking","packing","staging","shipped"];
+const STAGE_LABEL = {received:"Received",processed:"Processed",picking:"Picking",packing:"Packing",staging:"Staging",shipped:"Shipped"};
+const PRODUCTS = {
+  "TSH-BLK-M":{name:"Black Tee", size:"M"},
+  "TSH-BLK-L":{name:"Black Tee", size:"L"},
+  "MUG-STD":{name:"Ceramic Mug", size:"Std"},
+  "HAT-NVY":{name:"Navy Cap", size:"OS"},
+  "BAG-CVS":{name:"Canvas Tote", size:"OS"},
+};
+const NAMES = ["R. Sharma","A. Verma","S. Kaur","M. Singh","P. Gupta","N. Reddy","K. Iyer","D. Nair","V. Rao","T. Mehta",
+  "J. Kapoor","L. Das","H. Bose","G. Menon","F. Khan","C. Joshi","B. Pillai","O. Chatterjee","I. Bhatt","U. Malhotra"];
+
+let inventory = [
+  {sku:"TSH-BLK-M", name:"Black Tee - M", main:4, secondary:40, transferStatus:'none', transferQty:0},
+  {sku:"TSH-BLK-L", name:"Black Tee - L", main:22, secondary:10, transferStatus:'none', transferQty:0},
+  {sku:"MUG-STD", name:"Ceramic Mug", main:2, secondary:0, transferStatus:'none', transferQty:0},
+  {sku:"HAT-NVY", name:"Navy Cap", main:18, secondary:5, transferStatus:'none', transferQty:0},
+  {sku:"BAG-CVS", name:"Canvas Tote", main:0, secondary:30, transferStatus:'none', transferQty:0},
+];
+
+let exceptions = [
+  {id:'e1', orderId:'1045', type:'Stock mismatch — counted 5, found 2', status:'open'},
+  {id:'e2', orderId:'1043', type:'Picking issue — item on wrong shelf', status:'open'},
+  {id:'e3', orderId:'1041', type:'Inventory discrepancy — resolved after recount', status:'resolved'},
+];
+
+const now = Date.now();
+const HR = 3600000;
+function pickupInfo(order){
+  if(order.stage !== "staging") return null;
+  if(!order.pickupCutoff) order.pickupCutoff = Date.now() + (String(order.id) === '1047' ? 35*60*1000 : 3*60*60*1000);
+  const courier = order.courier || (order.id % 3 === 0 ? "DTDC" : order.id % 3 === 1 ? "Delhivery" : "Blue Dart");
+  order.courier = courier;
+  return {courier, cutoff:order.pickupCutoff};
+}
+function pickupClass(order){
+  const p=pickupInfo(order);
+  if(!p) return "ok";
+  const mins=Math.floor((p.cutoff-Date.now())/60000);
+  if(mins<=0) return "blocked";
+  if(mins<=30) return "stalled";
+  return "ok";
+}
+
+const STALL_LIMITS = {
+  received: 2,
+  processed: 2,
+  picking: 1,
+  packing: 1
+};
+function mkOrder(id, customer, items, priority, stage, deadlineHrsFromNow, confirmed){
+  return {
+    id,
+    customer,
+    items,
+    priority,
+    stage,
+    stageStartedAt: now,
+    deadlineAt: now + deadlineHrsFromNow * HR,
+    confirmed: !!confirmed
+  };
+}
+function stockFor(sku){
+  return inventory.find(i=>i.sku===sku);
+}
+
+function isBlocked(order){
+  return order.items.some(it=>{
+    const s = stockFor(it.sku);
+    return !s || s.main < it.qty;
+  });
+}
+
+function isStalled(order){
+  if(order.stage === 'shipped' || order.stage === 'staging') return false;
+
+  const limit = STALL_LIMITS[order.stage];
+  if(!limit) return false;
+
+  return Date.now() - order.stageStartedAt >= limit * HR;
+}
+
+function stalledDuration(order){
+  const minutes = Math.floor((Date.now() - order.stageStartedAt) / 60000);
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  if(hours > 0) return `${hours}h ${mins}m`;
+  return `${mins}m`;
+}
+// Deliberate scenario orders (kept from original build)
+let orders = [
+  mkOrder("1042","R. Sharma",[{sku:"TSH-BLK-M",qty:2}], true, "received", 3),
+  mkOrder("1043","A. Verma",[{sku:"HAT-NVY",qty:1}], true, "picking", 1),
+  mkOrder("1044","S. Kaur",[{sku:"BAG-CVS",qty:3}], false, "received", 26),
+  mkOrder("1045","M. Singh",[{sku:"MUG-STD",qty:5}], true, "processed", 2),
+  mkOrder("1046","P. Gupta",[{sku:"TSH-BLK-L",qty:1}], false, "packing", 20),
+  mkOrder("1047","N. Reddy",[{sku:"TSH-BLK-M",qty:1}], false, "staging", 14, true),
+  mkOrder("1048","K. Iyer",[{sku:"HAT-NVY",qty:2}], false, "shipped", -2, true),
+];
+
+// Controlled daily volume (~250 orders/day per the brief) — composed deliberately
+// rather than purely at random, so the demo reads as a believable operation:
+// a fixed number of priority orders and a fixed number of genuinely stock-blocked
+// orders, with everything else operationally healthy.
+const TARGET_TOTAL = 250;
+const TARGET_PRIORITY = 15;
+const TARGET_BLOCKED = 5;
+const HEALTHY_SKUS = ["TSH-BLK-L","HAT-NVY"];              // ample main-warehouse stock
+const SCARCE = [["TSH-BLK-M",5],["MUG-STD",4],["BAG-CVS",2]]; // sku,qty deliberately over main stock
+const activeStages = [["received",25],["processed",25],["picking",25],["packing",25]];
+function weightedActiveStage(){
+  let r = Math.random()*100;
+  for(const [s,w] of activeStages){ if(r<w) return s; r-=w; }
+  return "received";
+}
+let nextId = 1049;
+let priorityUsed = orders.filter(o=>o.priority).length;
+let blockedUsed = orders.filter(o=>isBlocked(o)).length;
+
+// 1) Top up to the blocked-order target using scarce SKUs
+for(let i=blockedUsed; i<TARGET_BLOCKED; i++){
+  const [sku,qty] = SCARCE[i % SCARCE.length];
+  const cust = NAMES[Math.floor(Math.random()*NAMES.length)];
+  orders.push(mkOrder(String(nextId++), cust, [{sku,qty}], false, weightedActiveStage(), 6+Math.random()*30));
+}
+// 2) Top up to the priority-order target using healthy SKUs (urgency without blockage)
+for(let i=priorityUsed; i<TARGET_PRIORITY; i++){
+  const sku = HEALTHY_SKUS[Math.floor(Math.random()*HEALTHY_SKUS.length)];
+  const cust = NAMES[Math.floor(Math.random()*NAMES.length)];
+  const stage = Math.random()<0.4 ? "shipped" : weightedActiveStage();
+  const deadlineHrs = stage==="shipped" ? -(Math.random()*20) : (0.3+Math.random()*4);
+  orders.push(mkOrder(String(nextId++), cust, [{sku,qty:1+Math.floor(Math.random()*2)}], true, stage, deadlineHrs, stage==="shipped"));
+}
+// 3) Fill the rest with ordinary, operationally healthy orders across the full pipeline
+const stageWeights = [["shipped",55],["staging",9],["packing",9],["picking",9],["processed",9],["received",9]];
+function weightedStage(){
+  let r = Math.random()*100;
+  for(const [s,w] of stageWeights){ if(r<w) return s; r-=w; }
+  return "received";
+}
+while(orders.length < TARGET_TOTAL){
+
+  const sku = HEALTHY_SKUS[Math.floor(Math.random()*HEALTHY_SKUS.length)];
+  const stage = weightedStage();
+  const cust = NAMES[Math.floor(Math.random()*NAMES.length)];
+  const deadlineHrs = stage==="shipped" ? -(Math.random()*24) : (4+Math.random()*44);
+  orders.push(mkOrder(String(nextId++), cust, [{sku,qty:1+Math.floor(Math.random()*2)}], false, stage, deadlineHrs, stage==="shipped"||stage==="staging"));
+}
+const stalledPicking = orders.find(
+  o => o.stage === "picking" && !isBlocked(o) && !o.priority
+);
+
+if(stalledPicking){
+  stalledPicking.stageStartedAt = Date.now() - (2 * HR);
+}
+const stalledPacking = orders.find(
+  o => o.stage === "packing" && !isBlocked(o) && !o.priority
+);
+
+if(stalledPacking){
+  stalledPacking.stageStartedAt = Date.now() - (90 * 60000);
+}
+
+function neededQtyFor(sku){
+  // how much main-warehouse stock is actually required to clear current demand for this SKU
+  const s = stockFor(sku);
+  const demand = orders.filter(o=>o.stage!=='shipped')
+    .reduce((sum,o)=> sum + o.items.filter(it=>it.sku===sku).reduce((s2,it)=>s2+it.qty,0), 0);
+  return Math.max(demand - s.main, 1);
+}
+function remaining(order){
+  const ms = order.deadlineAt - Date.now();
+  if(order.stage==='shipped') return {text:'—', cls:''};
+  if(ms<=0) return {text:'Overdue', cls:'risk'};
+  const totalMin = Math.round(ms/60000);
+  const h = Math.floor(totalMin/60), m = totalMin%60;
+  const text = h>0 ? `${h}h ${m}m left` : `${m}m left`;
+  const cls = ms<=2*HR?'risk':ms<=6*HR?'soon':'';
+  return {text, cls};
+}
+
+let currentView = 'office';
+let focusOrderId = null;
+let orderFilter = 'attention';
+let officeShown = 20, floorShown = 20;
+
+function setView(v){
+  currentView = v;
+  document.getElementById('tabOffice').classList.toggle('active', v==='office');
+  document.getElementById('tabFloor').classList.toggle('active', v==='floor');
+  document.getElementById('viewOffice').classList.toggle('hide', v!=='office');
+  document.getElementById('viewFloor').classList.toggle('hide', v!=='floor');
+  render();
+}
+function setFilter(f){ orderFilter=f; officeShown=20; render(); }
+
+function advance(id){
+  const o = orders.find(o=>o.id===id);
+  if(!o) return;
+  const idx = STAGES.indexOf(o.stage);
+  if(idx < 0 || idx >= STAGES.length-1) return;
+  if(idx < STAGES.length-1){
+   if(o.stage === 'picking' && !o.stockDeducted){
+     o.items.forEach(it=>{ const st=stockFor(it.sku); if(st) st.main=Math.max(0,st.main-it.qty); });
+     o.stockDeducted=true;
+   }
+   o.stage = STAGES[idx+1];
+   o.stageStartedAt = Date.now();
+  }
+  render();
+}
+function cycleTransfer(sku){
+  const s = stockFor(sku);
+  if(!s) return;
+  if(s.transferStatus==='none'){ s.transferStatus='requested'; s.transferQty=Math.min(s.secondary, neededQtyFor(sku)); }
+  else if(s.transferStatus==='requested'){ s.transferStatus='in_transit'; }
+  else if(s.transferStatus==='in_transit'){ s.secondary-=s.transferQty; s.main+=s.transferQty; s.transferStatus='none'; s.transferQty=0; }
+  render();
+}
+function toggleConfirm(id){
+  const o=orders.find(o=>o.id===id);
+  if(!o) return;
+  o.confirmed=!o.confirmed;
+  render();
+}
+function toggleException(id){
+  const e=exceptions.find(e=>e.id===id);
+  if(!e) return;
+  e.status = e.status==='open'?'resolved':'open';
+  render();
+}
+function scrollTo(elId){ setFilter('attention'); setTimeout(()=>{ const el=document.getElementById(elId); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); },50); }
+function goFloor(orderId=null){
+  focusOrderId = orderId;
+  setView('floor');
+}
+
+function filteredOrders(){
+  if(orderFilter==='attention'){
+    return orders.filter(o=>
+      (o.priority && remaining(o).cls === 'risk' && o.stage !== 'shipped') ||
+      (isBlocked(o) && o.stage !== 'shipped') ||
+      isStalled(o)
+    );
+  }
+  if(orderFilter==='active') return orders.filter(o=>o.stage!=='shipped');
+  if(orderFilter==='shipped') return orders.filter(o=>o.stage==='shipped');
+  return orders;
+}
+
+function renderOffice(){
+  const pipelineCounts = {}; STAGES.forEach(s=>pipelineCounts[s]=0);
+  orders.forEach(o=>pipelineCounts[o.stage]++);
+
+const atRiskOrders = orders.filter(
+  o => o.priority &&
+       remaining(o).cls === 'risk' &&
+       o.stage !== 'shipped' &&
+       !isBlocked(o)
+);
+
+const blockedOrders = orders.filter(
+  o => isBlocked(o) && o.stage !== 'shipped'
+);
+
+const stalledOrders = orders.filter(
+  o => isStalled(o) && !isBlocked(o)
+);
+
+const lowSkus = inventory.filter(i=>i.main<3);
+
+  let html = `<div class="panel"><div class="panel-head"><h2>Fulfillment pipeline</h2><span class="count">${orders.length} orders today</span></div>
+  <div class="pipeline">${STAGES.map(s=>`<div class="pipe-stage"><div class="n">${pipelineCounts[s]}</div><div class="l">${STAGE_LABEL[s]}</div></div>`).join('')}</div></div>`;
+
+  html += `<div class="panel"><div class="panel-head"><h2>Needs attention</h2><span class="count">${atRiskOrders.length+blockedOrders.length+stalledOrders.length+lowSkus.length} alerts</span></div>`;
+  if(atRiskOrders.length+blockedOrders.length+stalledOrders.length+lowSkus.length===0){
+    html += `<div class="empty">Nothing urgent right now.</div>`;
+  } else {
+    atRiskOrders.forEach(o=>{
+      html += `<div class="attn-row"><div class="attn-left"><span class="dot" style="background:var(--amber)"></span><span>Order #${o.id} — priority, ${remaining(o).text.toLowerCase()}</span></div><button class="btn" onclick="goFloor('${o.id}')">Pick now</button></div>`;
+    });
+    blockedOrders.slice(0,8).forEach(o=>{
+      const sku = o.items.find(it=>{const s=stockFor(it.sku); return !s||s.main<it.qty;}).sku;
+      html += `<div class="attn-row"><div class="attn-left"><span class="dot" style="background:var(--red)"></span><span>Order #${o.id} — blocked on ${sku}</span></div><button class="btn" onclick="scrollTo('inv-${sku}')">Review</button></div>`;
+    });
+    lowSkus.forEach(s=>{
+      html += `<div class="attn-row"><div class="attn-left"><span class="dot" style="background:var(--blue)"></span><span>${s.name} — low in main warehouse</span></div><button class="btn" onclick="document.getElementById('inv-${s.sku}').scrollIntoView({behavior:'smooth',block:'center'})">Review stock</button></div>`;
+    });
+    stalledOrders.forEach(o=>{
+  html += `<div class="attn-row">
+    <div class="attn-left">
+      <span class="dot" style="background:var(--amber)"></span>
+      <span>Order #${o.id} — stalled in ${STAGE_LABEL[o.stage]} for ${stalledDuration(o)}</span>
+    </div>
+    <button class="btn" onclick="goFloor('${o.id}')">Review</button>
+  </div>`;
+});
+  }
+  html += `</div>`;
+
+  html += `<div class="panel"><div class="panel-head"><h2>Exceptions</h2><span class="count">${exceptions.filter(e=>e.status==='open').length} open</span></div>`;
+  exceptions.forEach(e=>{
+    html += `<div class="exc-row"><div class="attn-left"><span class="dot" style="background:${e.status==='open'?'var(--red)':'var(--sage)'}"></span><span>#${e.orderId} — ${e.type}</span></div>
+    <button class="btn ${e.status==='resolved'?'done':''}" onclick="toggleException('${e.id}')">${e.status==='open'?'Mark resolved':'Reopen'}</button></div>`;
+  });
+  html += `</div>`;
+
+  const stagingOrders = orders.filter(o=>o.stage==='staging');
+  html += `<div class="panel"><div class="panel-head"><h2>Staging & Courier Pickup</h2><span class="count">${stagingOrders.length} awaiting handoff</span></div>`;
+  if(stagingOrders.length===0){
+    html += `<div class="empty">No packed orders waiting for courier pickup.</div>`;
+  } else {
+    stagingOrders.forEach(o=>{
+      const p=pickupInfo(o);
+      const mins=Math.max(0,Math.floor((p.cutoff-Date.now())/60000));
+      const status=mins===0?'Pickup overdue':mins<=30?'Pickup due soon':'Awaiting pickup';
+      html += `<div class="attn-row">
+        <div class="attn-left">
+          <span class="dot" style="background:${mins===0?'var(--red)':mins<=30?'var(--amber)':'var(--sage)'}"></span>
+          <span>Order #${o.id} — ${p.courier} · ${mins===0?'overdue':mins+' min until pickup'}</span>
+        </div>
+        <span class="badge ${pickupClass(o)}">${status}</span>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  const fo = filteredOrders();
+  html += `<div class="panel"><div class="panel-head"><h2>Orders</h2><span class="count">${fo.length} shown of ${orders.length}</span></div>
+  <div class="filters">
+    <button class="${orderFilter==='attention'?'active':''}" onclick="setFilter('attention')">Needs attention</button>
+    <button class="${orderFilter==='active'?'active':''}" onclick="setFilter('active')">Active</button>
+    <button class="${orderFilter==='shipped'?'active':''}" onclick="setFilter('shipped')">Shipped</button>
+    <button class="${orderFilter==='all'?'active':''}" onclick="setFilter('all')">All</button>
+  </div>
+  <table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Status</th><th>Deadline</th><th>Flags</th></tr></thead><tbody>`;
+  const sorted = fo.slice().sort((a,b)=> (b.priority-a.priority) || a.deadlineAt-b.deadlineAt);
+  sorted.slice(0, officeShown).forEach(o=>{
+    const blockedFlag = isBlocked(o) && o.stage !== 'shipped';
+    const stalledFlag = isStalled(o) && !blockedFlag;
+    const r = remaining(o);
+    html += `<tr class="${blockedFlag?'blocked':''}">
+      <td class="mono">#${o.id}</td>
+      <td>${o.customer}</td>
+      <td>${o.items.map(i=>`${i.sku} ×${i.qty}`).join(', ')}</td>
+      <td class="stage"><b>${STAGE_LABEL[o.stage]}</b></td>
+      <td class="deadline ${r.cls}">${r.text}</td>
+      <td>${o.priority?'<span class="badge priority">Priority</span> ':''}${blockedFlag?'<span class="badge blocked">Stock blocked</span>':(stalledFlag?'<span class="badge stalled">Stalled</span>':(o.stage!=='shipped'?'<span class="badge ok">On track</span>':'')  )}</td>
+    </tr>`;
+  });
+html += `</tbody></table>`;
+
+if(sorted.length > officeShown) {
+  const remaining = sorted.length - officeShown;
+  const nextCount = Math.min(20, remaining);
+  const total = sorted.length;
+
+  html += `<div style="padding:10px 18px">
+    <button class="load-more" onclick="officeShown=Math.min(officeShown+20, ${total});render()">
+      Show ${nextCount} more (${remaining} remaining)
+    </button>
+  </div>`;
+}
+
+html += `</div>`;
+
+  html += `<div class="panel"><div class="panel-head"><h2>Inventory — Main Warehouse</h2><span class="count">ships from here only</span></div>`;
+  inventory.forEach(i=>{
+    const low = i.main < 3;
+    let action = '';
+    if(low && i.secondary>0){
+      const transferQty = Math.min(i.secondary, neededQtyFor(i.sku));
+      const labels = {none:`Request transfer (${transferQty} units)`, requested:`Requested (${i.transferQty}) — mark in transit`, in_transit:`In transit — mark received`};
+      action = `<button class="btn" onclick="cycleTransfer('${i.sku}')">${labels[i.transferStatus]}</button>`;
+    } else if(low && i.secondary===0){
+      action = `<span class="badge blocked">No backup stock</span>`;
+    }
+    html += `<div class="inv-row" id="inv-${i.sku}">
+      <div><div>${i.name} <span class="mono" style="color:var(--sub)">(${i.sku})</span></div>
+        <div class="inv-loc">Secondary warehouse: ${i.secondary} in stock ${i.transferStatus!=='none'?`· transfer ${i.transferStatus.replace('_',' ')}`:''}</div></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="inv-qty ${low?'low':''}">${i.main} in main</span>
+        ${action}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('viewOffice').innerHTML = html;
+}
+
+function renderFloor(){
+  const active = orders.filter(o=> o.stage!=='shipped' && o.stage!=='staging')
+    .sort((a,b)=> (b.priority-a.priority) || a.deadlineAt-b.deadlineAt);
+  const stagingOrders = orders.filter(o=>o.stage==='staging');
+  let html = `<div class="panel"><div class="panel-head"><h2>Staging & Courier Pickup</h2><span class="count">${stagingOrders.length} waiting</span></div>`;
+  if(stagingOrders.length===0){
+    html += `<div class="empty">No packed orders waiting for courier pickup.</div>`;
+  } else {
+    stagingOrders.forEach(o=>{
+      const p=pickupInfo(o);
+      const mins=Math.max(0,Math.floor((p.cutoff-Date.now())/60000));
+      const status=mins===0?'Pickup overdue':mins<=30?'Pickup due soon':'Awaiting pickup';
+      html += `<div class="attn-row"><div class="attn-left"><span class="dot" style="background:${mins===0?'var(--red)':mins<=30?'var(--amber)':'var(--sage)'}"></span><span>Order #${o.id} — ${p.courier} · ${mins===0?'overdue':mins+' min until pickup'}</span></div><span class="badge ${pickupClass(o)}">${status}</span></div>`;
+    });
+  }
+  html += `</div>`;
+  if(active.length===0){
+    html += `<div class="empty">All caught up — nothing to pick or pack right now.</div>`;
+    document.getElementById('viewFloor').innerHTML = html;
+    return;
+  }
+  html += `<div class="wh-list">`;
+  active.slice(0, floorShown).forEach(o=>{
+    const blocked = isBlocked(o);
+    const idx = STAGES.indexOf(o.stage);
+    const nextLabel = idx<STAGES.length-1 ? "Mark "+STAGE_LABEL[STAGES[idx+1]] : "";
+      html += `<div id="task-${o.id}" class="task ${o.priority?'priority-task':''} ${blocked?'blocked-task':''}">
+      <div class="task-top">
+        <div><div class="task-id">#${o.id} ${o.priority?'<span class="badge priority">Priority</span>':''}</div>
+        <div class="task-cust">for ${o.customer}</div></div>
+        <div class="stage"><b>${STAGE_LABEL[o.stage]}</b></div>
+      </div>
+      <div class="item-detail">
+        ${o.items.map(it=>{const pr=PRODUCTS[it.sku]||{name:it.sku,size:'—'};
+          return `<div class="row"><span>${pr.name}, ${pr.size}</span><b>${it.sku} × ${it.qty}</b></div>`;}).join('')}
+      </div>
+      ${blocked ? `<div class="badge blocked">Waiting on stock — do not pick yet</div>` :
+      `<label class="check"><input type="checkbox" ${o.confirmed?'checked':''} onchange="toggleConfirm('${o.id}')"> I confirm the physical item(s) match what's listed above</label>
+      <div class="task-actions">
+        <button class="big-btn primary" ${(!o.confirmed)?'disabled':''} onclick="advance('${o.id}')">${nextLabel}</button>
+      </div>`}
+    </div>`;
+  });
+  html += `</div>`;
+  if(active.length > floorShown){
+    const remaining = active.length - floorShown;
+    const nextCount = Math.min(20, remaining);
+    const total = active.length;
+    html += `<button class="load-more" onclick="floorShown=Math.min(floorShown+20, ${total});render()">Show ${nextCount} more (${remaining} remaining)</button>`;
+  }
+  document.getElementById('viewFloor').innerHTML = html;
+
+  if(focusOrderId){
+    const target = document.getElementById(`task-${focusOrderId}`);
+    if(target){
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+      target.style.outline = '2px solid var(--blue)';
+      target.style.outlineOffset = '2px';
+
+      setTimeout(()=>{
+        target.style.outline = '';
+        target.style.outlineOffset = '';
+      }, 1800);
+    }
+    focusOrderId = null;
+  }
+}
+
+function render(){ if(currentView==='office') renderOffice(); else renderFloor(); }
+render();
+setInterval(render, 30000); // live countdown refresh
+</script>
+</body>
+</html>
